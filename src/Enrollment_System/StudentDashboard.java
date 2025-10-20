@@ -479,7 +479,7 @@ public class StudentDashboard extends javax.swing.JFrame {
 
         fullname = firstName+ " " + middleInitial+ " " + surname;
         EMAIL = mail;
-        Enroll profileFrame = new Enroll(fullname, mail);
+        //Enroll profileFrame = new Enroll(fullname, mail);
 
         new StudentLogin().setVisible(true);
         this.dispose();

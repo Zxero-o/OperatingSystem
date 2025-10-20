@@ -12,6 +12,13 @@ import java.awt.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
+
 
 public class StudentLogin extends javax.swing.JFrame {
     
@@ -61,6 +68,40 @@ public class StudentLogin extends javax.swing.JFrame {
         editor.getComponent().setFont(new Font("Arial", Font.PLAIN, 30));
         jTable1.setDefaultEditor(Object.class, editor);
 }
+    
+    private void insertStudentToDatabase() {
+    String url = "jdbc:mysql://localhost:3306/enrollment_system"; // change to your DB name
+    String user = "root"; // change if you have another username
+    String password = "SechyAcire1118"; // add your MySQL password if any
+
+    String sql = "INSERT INTO student (FirstName, middleName, LastName, Gender, Birthdate, Email, ContactNo, year_level) "
+               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+    try (Connection conn = DriverManager.getConnection(url, user, password);
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setString(1, firstName);
+        pstmt.setString(2, middleInitial);
+        pstmt.setString(3, surname);
+        pstmt.setString(4, gender);
+        pstmt.setString(5, birthdate);
+        pstmt.setString(6, mail);
+        pstmt.setString(7, contactNo);
+        pstmt.setString(8, yearlvl);
+
+        int rows = pstmt.executeUpdate();
+
+        if (rows > 0) {
+            JOptionPane.showMessageDialog(this, "Student successfully registered!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to register student.");
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage());
+    }
+}
+
   
 
     /**
@@ -229,6 +270,9 @@ public class StudentLogin extends javax.swing.JFrame {
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
+        
+        insertStudentToDatabase();
+
         if (jTable1.isEditing()) {
             jTable1.getCellEditor().stopCellEditing();
         }
