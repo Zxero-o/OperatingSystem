@@ -70,37 +70,101 @@ public class StudentLogin extends javax.swing.JFrame {
 }
     
     private void insertStudentToDatabase() {
-    String url = "jdbc:mysql://localhost:3306/enrollment_system"; // change to your DB name
-    String user = "root"; // change if you have another username
-    String password = "SechyAcire1118"; // add your MySQL password if any
+    String url = "jdbc:mysql://localhost:3306/enrollment_system";
+    String user = "root";
+    String password = "SechyAcire1118";
 
-    String sql = "INSERT INTO student (FirstName, middleName, LastName, Gender, Birthdate, Email, ContactNo, year_level) "
-               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    // 🔹 get the currently logged in user_id from the user table based on username
+    String userId = null;
+    String username = Login.username; // assuming Login.java stores it statically after login
 
-    try (Connection conn = DriverManager.getConnection(url, user, password);
-         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    try (Connection conn = DriverManager.getConnection(url, user, password)) {
+        // First, find the User_ID based on the logged-in username
+        String getUserIdQuery = "SELECT User_ID FROM user WHERE Username = ?";
+        try (PreparedStatement ps = conn.prepareStatement(getUserIdQuery)) {
+            ps.setString(1, username);
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    userId = rs.getString("User_ID");
+                }
+            }
+        }
 
-        pstmt.setString(1, firstName);
-        pstmt.setString(2, middleInitial);
-        pstmt.setString(3, surname);
-        pstmt.setString(4, gender);
-        pstmt.setString(5, birthdate);
-        pstmt.setString(6, mail);
-        pstmt.setString(7, contactNo);
-        pstmt.setString(8, yearlvl);
+        if (userId == null) {
+            JOptionPane.showMessageDialog(this, "Error: Could not find User_ID for this user.");
+            return;
+        }
 
-        int rows = pstmt.executeUpdate();
+        // 🔹 Check if this student already exists in the table
+        String checkQuery = "SELECT COUNT(*) FROM student WHERE User_ID = ?";
+        boolean exists = false;
+        try (PreparedStatement ps = conn.prepareStatement(checkQuery)) {
+            ps.setString(1, userId);
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    exists = true;
+                }
+            }
+        }
 
-        if (rows > 0) {
-            JOptionPane.showMessageDialog(this, "Student successfully registered!");
+        if (exists) {
+            // 🔹 Update existing record
+            String updateQuery = """
+                UPDATE student 
+                SET FirstName = ?, MiddleName = ?, LastName = ?, Gender = ?, Birthdate = ?, 
+                    Email = ?, ContactNo = ?, year_level = ?, status = 'Pending' 
+                WHERE User_ID = ?
+            """;
+
+            try (PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
+                pstmt.setString(1, firstName);
+                pstmt.setString(2, middleInitial);
+                pstmt.setString(3, surname);
+                pstmt.setString(4, gender);
+                pstmt.setString(5, birthdate);
+                pstmt.setString(6, mail);
+                pstmt.setString(7, contactNo);
+                pstmt.setString(8, yearlvl);
+                pstmt.setString(9, userId);
+
+                int rows = pstmt.executeUpdate();
+                if (rows > 0) {
+                    JOptionPane.showMessageDialog(this, "Student information updated successfully!");
+                } else {
+                    JOptionPane.showMessageDialog(this, "No rows updated. Please check your data.");
+                }
+            }
         } else {
-            JOptionPane.showMessageDialog(this, "Failed to register student.");
+            // 🔹 Insert if it doesn't exist yet
+            String insertQuery = """
+                INSERT INTO student (FirstName, MiddleName, LastName, Gender, Birthdate, 
+                                     Email, ContactNo, year_level, status, User_ID, DateRegistered)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Pending', ?, CURDATE())
+            """;
+
+            try (PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
+                pstmt.setString(1, firstName);
+                pstmt.setString(2, middleInitial);
+                pstmt.setString(3, surname);
+                pstmt.setString(4, gender);
+                pstmt.setString(5, birthdate);
+                pstmt.setString(6, mail);
+                pstmt.setString(7, contactNo);
+                pstmt.setString(8, yearlvl);
+                pstmt.setString(9, userId);
+
+                int rows = pstmt.executeUpdate();
+                if (rows > 0) {
+                    JOptionPane.showMessageDialog(this, "New student record created successfully!");
+                }
+            }
         }
 
     } catch (SQLException e) {
         JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage());
     }
 }
+
 
   
 
@@ -270,8 +334,6 @@ public class StudentLogin extends javax.swing.JFrame {
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
-        
-        insertStudentToDatabase();
 
         if (jTable1.isEditing()) {
             jTable1.getCellEditor().stopCellEditing();
@@ -332,6 +394,8 @@ public class StudentLogin extends javax.swing.JFrame {
         fullname = firstName+ " " + middleInitial+ " " + surname;
         EMAIL = mail;
         //Enroll profileFrame = new Enroll(fullname, mail);
+        
+        insertStudentToDatabase();
 
         new StudentDashboard(/*firstName, middleInitial, surname, gender, birthdate, mail, contactNo, yearlvl*/).setVisible(true);
         this.dispose();

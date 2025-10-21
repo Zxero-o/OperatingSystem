@@ -16,6 +16,7 @@ import java.sql.*;
 public class Login extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Login.class.getName());
+    public static String username;
 
     /**
      * Creates new form Login
@@ -303,6 +304,7 @@ public class Login extends javax.swing.JFrame {
         User user = LoginDAO.login(username, password);
 
         if (user != null) {
+            Login.username = username;
             openDashboard(user);
         } else {
             JOptionPane.showMessageDialog(this, "Invalid username or password!");
