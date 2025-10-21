@@ -62,7 +62,7 @@ public class Login extends javax.swing.JFrame {
                             if (email == null || email.isEmpty() || status.equalsIgnoreCase("Pending")) {
                                 new StudentLogin().setVisible(true);
                             } else {
-                                new StudentDashboard().setVisible(true);
+                                new StudentDashboard(username).setVisible(true);
                             }
                         }                          
                 }

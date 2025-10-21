@@ -4,10 +4,18 @@
  */
 package Enrollment_System;
 
+import static Enrollment_System.Login.username;
 import java.awt.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author marionne pascual
@@ -24,14 +32,19 @@ public class StudentDashboard extends javax.swing.JFrame {
     static String contactNo= "";
     static String EMAIL= "";
     static String yearlvl ="";
+    static String studentID = "";
+    static String accStatus = "";
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(StudentDashboard.class.getName());
+    private static String username;
 
     /**
      * Creates new form StudentDashboard
      */
-    public StudentDashboard() {
+    public StudentDashboard(String username) {
+        
         initComponents();
+        loadStudentData(username);
         populateStudentTable();
         
         Name.setText(fullname);
@@ -39,16 +52,17 @@ public class StudentDashboard extends javax.swing.JFrame {
         Name.setFocusable(false);
         Name.getCaret().setVisible(false);
         
-        email.setEditable(false); 
-        email.setFocusable(false);
-        email.getCaret().setVisible(false);
+        Status.setEditable(false); 
+        Status.setFocusable(false);
+        Status.getCaret().setVisible(false);
         
-        status.setEditable(false); 
-        status.setFocusable(false);
-        status.getCaret().setVisible(false);
+        contactno.setEditable(false); 
+        contactno.setFocusable(false);
+        contactno.getCaret().setVisible(false);
         
-        email.setText(mail);
+        Status.setText(mail);
     }
+    
     private void populateStudentTable() {
         jTable1.setIntercellSpacing(new Dimension(10, 10));
         jTable1.setShowGrid(true);
@@ -75,6 +89,51 @@ public class StudentDashboard extends javax.swing.JFrame {
         editor.getComponent().setFont(new Font("Arial", Font.PLAIN, 30));
         jTable1.setDefaultEditor(Object.class, editor);
 }
+    
+    
+    private void loadStudentData(String username) {
+    try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/enrollment_system", "root", "SechyAcire1118")) {
+        // Join users and students so we get student_id and status automatically
+        String sql = "SELECT s.Student_ID, s.FirstName, s.MiddleName, s.LastName, s.Gender, s.birthdate, " +
+                     "s.Email, s.ContactNo, s.year_level, u.status " +
+                     "FROM student s " +
+                     "JOIN user u ON s.User_ID = u.User_ID " +
+                     "WHERE u.username = ?";
+
+        PreparedStatement pst = con.prepareStatement(sql);
+        pst.setString(1, username);
+        ResultSet rs = pst.executeQuery();
+
+        if (rs.next()) {
+            studentID = rs.getString("Student_ID");
+            accStatus = rs.getString("status");
+            firstName = rs.getString("FirstName");
+            middleInitial = rs.getString("MiddleName");
+            surname = rs.getString("LastName");
+            gender = rs.getString("Gender");
+            birthdate = rs.getString("birthdate");
+            mail = rs.getString("Email");
+            contactNo = rs.getString("ContactNo");
+            yearlvl = rs.getString("year_level");
+
+            fullname = firstName + " " + middleInitial + " " + surname;
+
+            // Display in UI
+            Name.setText(fullname);
+            Status.setText(mail);
+            email.setText(accStatus);
+            StudentID.setText(studentID);
+            contactno.setText(contactNo);
+        } else {
+            JOptionPane.showMessageDialog(this, "No data found for this user.");
+        }
+
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage());
+       
+    }
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -89,17 +148,17 @@ public class StudentDashboard extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
+        StudentID = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
         jPanel5 = new javax.swing.JPanel();
-        jButton10 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
-        jButton12 = new javax.swing.JButton();
-        status = new javax.swing.JTextField();
+        Enrollbtn = new javax.swing.JButton();
+        Logoutbtn = new javax.swing.JButton();
+        CLSchedbtn = new javax.swing.JButton();
+        contactno = new javax.swing.JTextField();
         Name = new javax.swing.JTextField();
         email = new javax.swing.JTextField();
+        Status = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jButton5 = new javax.swing.JButton();
@@ -138,11 +197,11 @@ public class StudentDashboard extends javax.swing.JFrame {
         jPanel3.setBackground(new java.awt.Color(191, 218, 232));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTextField4.setText("jTextField4");
-        jPanel3.add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(34, 450, -1, -1));
-
-        jTextField5.setText("jTextField5");
-        jPanel3.add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(415, 450, -1, -1));
+        StudentID.setEditable(false);
+        StudentID.setBackground(new java.awt.Color(255, 255, 255));
+        StudentID.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        StudentID.setCaretColor(new java.awt.Color(255, 255, 255));
+        jPanel3.add(StudentID, new org.netbeans.lib.awtextra.AbsoluteConstraints(34, 450, 150, -1));
 
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
         jPanel3.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 425, 527, 10));
@@ -156,48 +215,49 @@ public class StudentDashboard extends javax.swing.JFrame {
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 103, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         jPanel3.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
-        jButton10.addActionListener(new java.awt.event.ActionListener() {
+        Enrollbtn.setText("ENROLL");
+        Enrollbtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton10ActionPerformed(evt);
+                EnrollbtnActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton10, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 510, 140, 40));
+        jPanel3.add(Enrollbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 510, 140, 40));
 
-        jButton11.setText("LOGOUT");
-        jButton11.addActionListener(new java.awt.event.ActionListener() {
+        Logoutbtn.setText("LOGOUT");
+        Logoutbtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton11ActionPerformed(evt);
+                LogoutbtnActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton11, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 590, 140, 40));
+        jPanel3.add(Logoutbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 590, 140, 40));
 
-        jButton12.addActionListener(new java.awt.event.ActionListener() {
+        CLSchedbtn.setText("CLASS SCHEDULES");
+        CLSchedbtn.setToolTipText("");
+        CLSchedbtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton12ActionPerformed(evt);
+                CLSchedbtnActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton12, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 550, 140, 40));
+        jPanel3.add(CLSchedbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 550, 140, 40));
 
-        status.setBackground(new java.awt.Color(191, 218, 232));
-        status.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        status.setBorder(null);
-        status.addActionListener(new java.awt.event.ActionListener() {
+        contactno.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        contactno.setBorder(null);
+        contactno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                statusActionPerformed(evt);
+                contactnoActionPerformed(evt);
             }
         });
-        jPanel3.add(status, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 380, 120, 30));
+        jPanel3.add(contactno, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 380, 120, 30));
 
-        Name.setBackground(new java.awt.Color(191, 218, 232));
         Name.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         Name.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         Name.setBorder(null);
@@ -208,7 +268,6 @@ public class StudentDashboard extends javax.swing.JFrame {
         });
         jPanel3.add(Name, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 300, 290, 30));
 
-        email.setBackground(new java.awt.Color(191, 218, 232));
         email.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         email.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         email.setBorder(null);
@@ -217,7 +276,17 @@ public class StudentDashboard extends javax.swing.JFrame {
                 emailActionPerformed(evt);
             }
         });
-        jPanel3.add(email, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 340, 120, 30));
+        jPanel3.add(email, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 450, 170, 20));
+
+        Status.setEditable(false);
+        Status.setBackground(new java.awt.Color(255, 255, 255));
+        Status.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        Status.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                StatusActionPerformed(evt);
+            }
+        });
+        jPanel3.add(Status, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 340, 240, -1));
 
         jPanel4.setBackground(new java.awt.Color(191, 218, 232));
 
@@ -342,7 +411,7 @@ public class StudentDashboard extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 6, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(64, 64, 64)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -358,48 +427,46 @@ public class StudentDashboard extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 642, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 36, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1539, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1539, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(31, 31, 31))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+    private void EnrollbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnrollbtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton10ActionPerformed
+    }//GEN-LAST:event_EnrollbtnActionPerformed
 
-    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+    private void LogoutbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutbtnActionPerformed
         // TODO add your handling code here:
         new Signup().setVisible(true); // open the new window
         this.dispose(); // close the current window
-    }//GEN-LAST:event_jButton11ActionPerformed
+    }//GEN-LAST:event_LogoutbtnActionPerformed
 
-    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+    private void CLSchedbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CLSchedbtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton12ActionPerformed
-
-    private void statusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statusActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_statusActionPerformed
+    }//GEN-LAST:event_CLSchedbtnActionPerformed
 
     private void NameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_NameActionPerformed
-
-    private void emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_emailActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
@@ -485,6 +552,18 @@ public class StudentDashboard extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton8ActionPerformed
 
+    private void emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_emailActionPerformed
+
+    private void contactnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contactnoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_contactnoActionPerformed
+
+    private void StatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StatusActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_StatusActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -507,15 +586,18 @@ public class StudentDashboard extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new StudentDashboard().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new StudentDashboard(username).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton CLSchedbtn;
+    private javax.swing.JButton Enrollbtn;
+    private javax.swing.JButton Logoutbtn;
     private javax.swing.JTextField Name;
+    private javax.swing.JTextField Status;
+    private javax.swing.JTextField StudentID;
+    private javax.swing.JTextField contactno;
     private javax.swing.JTextField email;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
@@ -532,8 +614,5 @@ public class StudentDashboard extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField status;
     // End of variables declaration//GEN-END:variables
 }

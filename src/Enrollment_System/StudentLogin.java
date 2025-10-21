@@ -397,7 +397,8 @@ public class StudentLogin extends javax.swing.JFrame {
         
         insertStudentToDatabase();
 
-        new StudentDashboard(/*firstName, middleInitial, surname, gender, birthdate, mail, contactNo, yearlvl*/).setVisible(true);
+        StudentDashboard dashboard = new StudentDashboard(Login.username);
+        dashboard.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton8ActionPerformed
 
