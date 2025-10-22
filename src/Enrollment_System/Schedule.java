@@ -163,7 +163,7 @@ public class Schedule extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "...", "SUBJ CODE", "DAY", "TIME", "ROOM", "UNITS", "SECTION"
+                "...", "CAT NO", "DAY", "TIME", "ROOM", "UNITS", "SECTION"
             }
         ));
         jTable1.setFocusable(false);
