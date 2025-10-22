@@ -71,7 +71,7 @@ public class StudentDashboard extends javax.swing.JFrame {
         String[] columnNames = {"", ""};
         Object[][] data = {
         {"First name", firstName},
-        {"Middle Initial", middleInitial},
+        {"Middle Name", middleInitial},
         {"Surname", surname},  
         {"Gender", gender},
         {"Birthdate", birthdate},
