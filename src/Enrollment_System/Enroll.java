@@ -18,6 +18,8 @@ public class Enroll extends javax.swing.JFrame {
     static String sem;
     static String temp1;
     static int year;
+    static String fullname;
+    static String course;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Enroll.class.getName());
 
     /**
@@ -29,6 +31,11 @@ public class Enroll extends javax.swing.JFrame {
         initComponents();
         
         
+    }
+    
+    public Enroll(String fullname){
+        initComponents();
+        this.fullname = fullname;
     }
 
     /**
@@ -191,6 +198,11 @@ public class Enroll extends javax.swing.JFrame {
         jPanel4.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(23, 402, -1, -1));
 
         Course.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        Course.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CourseActionPerformed(evt);
+            }
+        });
         jPanel4.add(Course, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 100, 410, 75));
 
         SemesterList.setFont(new java.awt.Font("Segoe UI", 1, 32)); // NOI18N
@@ -261,7 +273,9 @@ public class Enroll extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        new Payment().setVisible(true);
+        course = Course.getText();
+        Payment profileFrame = new Payment(fullname, course, year);
+        new Payment(fullname, course, year).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -283,6 +297,10 @@ public class Enroll extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_YearListValueChanged
+
+    private void CourseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CourseActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CourseActionPerformed
 
     /**
      * @param args the command line arguments
