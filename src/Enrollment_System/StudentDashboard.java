@@ -4,7 +4,6 @@
  */
 package Enrollment_System;
 
-import static Enrollment_System.Login.username;
 import java.awt.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.DefaultCellEditor;
@@ -82,8 +81,8 @@ public class StudentDashboard extends javax.swing.JFrame {
 
         jTable1.setModel(new DefaultTableModel(data, columnNames));
         
-        jTable1.setSelectionBackground(Color.WHITE); // change selected row color
-        jTable1.setSelectionForeground(Color.BLACK);      // text color when selected
+        jTable1.setSelectionBackground(Color.WHITE); 
+        jTable1.setSelectionForeground(Color.BLACK);      
         
         DefaultCellEditor editor = new DefaultCellEditor(new JTextField());
         editor.getComponent().setFont(new Font("Arial", Font.PLAIN, 30));
@@ -93,7 +92,7 @@ public class StudentDashboard extends javax.swing.JFrame {
     
     private void loadStudentData(String username) {
     try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/enrollment_system", "root", "SechyAcire1118")) {
-        // Join users and students so we get student_id and status automatically
+        
         String sql = "SELECT s.Student_ID, s.FirstName, s.MiddleName, s.LastName, s.Gender, s.birthdate, " +
                      "s.Email, s.ContactNo, s.year_level, u.status " +
                      "FROM student s " +
@@ -118,7 +117,6 @@ public class StudentDashboard extends javax.swing.JFrame {
 
             fullname = firstName + " " + middleInitial + " " + surname;
 
-            // Display in UI
             Name.setText(fullname);
             Status.setText(mail);
             email.setText(accStatus);
@@ -452,48 +450,6 @@ public class StudentDashboard extends javax.swing.JFrame {
 
     private void EnrollbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnrollbtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_EnrollbtnActionPerformed
-
-    private void LogoutbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutbtnActionPerformed
-        // TODO add your handling code here:
-        new Signup().setVisible(true); // open the new window
-        this.dispose(); // close the current window
-    }//GEN-LAST:event_LogoutbtnActionPerformed
-
-    private void CLSchedbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CLSchedbtnActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_CLSchedbtnActionPerformed
-
-    private void NameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_NameActionPerformed
-
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-        //new Enroll(fullname, mail).setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jButton5ActionPerformed
-
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-        //new Schedule().setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jButton6ActionPerformed
-
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
-        //new Payment().setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jButton7ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-        new StudentLogin().setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jButton4ActionPerformed
-
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        // TODO add your handling code here:
         if (jTable1.isEditing()) {
             jTable1.getCellEditor().stopCellEditing();
         }
@@ -548,8 +504,51 @@ public class StudentDashboard extends javax.swing.JFrame {
         EMAIL = mail;
         //Enroll profileFrame = new Enroll(fullname, mail);
 
+        Enroll profileFrame = new Enroll(fullname, studentID);
+        new Enroll(fullname, studentID).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_EnrollbtnActionPerformed
+
+    private void LogoutbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutbtnActionPerformed
+        // TODO add your handling code here:
+        new Signup().setVisible(true); // open the new window
+        this.dispose(); // close the current window
+    }//GEN-LAST:event_LogoutbtnActionPerformed
+
+    private void CLSchedbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CLSchedbtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CLSchedbtnActionPerformed
+
+    private void NameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_NameActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        //new Enroll(fullname, mail).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        //new Schedule().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        //new Payment().setVisible(true);
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
         new StudentLogin().setVisible(true);
         this.dispose();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+        
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailActionPerformed

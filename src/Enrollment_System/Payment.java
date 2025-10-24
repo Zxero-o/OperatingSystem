@@ -4,6 +4,9 @@
  */
 package Enrollment_System;
 
+import javax.swing.JOptionPane;
+import dao.Payment2DAO;
+
 /**
  *
  * @author ivanc
@@ -236,9 +239,26 @@ public class Payment extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        // TODO add your handling code here:
+        try {
+        String fullName = fn.getText().trim();
+        String yearLevel = yr.getText().trim();
+        String course = cr.getText().trim();
+
+        if (fullName.isEmpty() || yearLevel.isEmpty() || course.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill out all fields before proceeding.");
+            return;
+        }
+
+        // Optionally: insert an initial payment record if you want
+        // dao.PaymentDAO.insertInitialPayment(fullName, yearLevel, course);
+
+        // Proceed to Payment2
         new Payment2().setVisible(true);
         this.dispose();
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    }
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void crActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crActionPerformed

@@ -74,12 +74,11 @@ public class StudentLogin extends javax.swing.JFrame {
     String user = "root";
     String password = "SechyAcire1118";
 
-    // 🔹 get the currently logged in user_id from the user table based on username
     String userId = null;
-    String username = Login.username; // assuming Login.java stores it statically after login
+    String username = Login.username; 
 
     try (Connection conn = DriverManager.getConnection(url, user, password)) {
-        // First, find the User_ID based on the logged-in username
+        
         String getUserIdQuery = "SELECT User_ID FROM user WHERE Username = ?";
         try (PreparedStatement ps = conn.prepareStatement(getUserIdQuery)) {
             ps.setString(1, username);
@@ -95,7 +94,6 @@ public class StudentLogin extends javax.swing.JFrame {
             return;
         }
 
-        // 🔹 Check if this student already exists in the table
         String checkQuery = "SELECT COUNT(*) FROM student WHERE User_ID = ?";
         boolean exists = false;
         try (PreparedStatement ps = conn.prepareStatement(checkQuery)) {
@@ -108,7 +106,6 @@ public class StudentLogin extends javax.swing.JFrame {
         }
 
         if (exists) {
-            // 🔹 Update existing record
             String updateQuery = """
                 UPDATE student 
                 SET FirstName = ?, MiddleName = ?, LastName = ?, Gender = ?, Birthdate = ?, 
@@ -135,7 +132,6 @@ public class StudentLogin extends javax.swing.JFrame {
                 }
             }
         } else {
-            // 🔹 Insert if it doesn't exist yet
             String insertQuery = """
                 INSERT INTO student (FirstName, MiddleName, LastName, Gender, Birthdate, 
                                      Email, ContactNo, year_level, status, User_ID, DateRegistered)
@@ -393,12 +389,12 @@ public class StudentLogin extends javax.swing.JFrame {
         }
         fullname = firstName+ " " + middleInitial+ " " + surname;
         EMAIL = mail;
-        //Enroll profileFrame = new Enroll(fullname, mail);
         
         insertStudentToDatabase();
 
-        StudentDashboard dashboard = new StudentDashboard(Login.username);
-        dashboard.setVisible(true);
+        new PopUP().setVisible(true);
+      
+        new StudentDashboard(Login.username).setVisible(false);
         this.dispose();
     }//GEN-LAST:event_jButton8ActionPerformed
 
