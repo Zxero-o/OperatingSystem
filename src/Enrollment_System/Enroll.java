@@ -9,6 +9,8 @@ import java.awt.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
+import java.io.*;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -19,8 +21,10 @@ public class Enroll extends javax.swing.JFrame {
     static String temp1;
     static int year;
     static String fullname;
+    static String studentID;
     static String course;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Enroll.class.getName());
+    
 
     /**
      * Creates new form Enroll
@@ -29,13 +33,12 @@ public class Enroll extends javax.swing.JFrame {
     
     public Enroll() {
         initComponents();
-        
-        
     }
     
-    public Enroll(String fullname){
+    public Enroll(String fullname, String studentID){
         initComponents();
         this.fullname = fullname;
+        this.studentID = studentID;
     }
 
     /**
@@ -273,10 +276,19 @@ public class Enroll extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        try {
         course = Course.getText();
-        Payment profileFrame = new Payment(fullname, course, year);
+        sem = SemesterList.getSelectedValue();
+        
+        dao.EnrollDAO.insertEnrollment(studentID, course, sem, year);
+
         new Payment(fullname, course, year).setVisible(true);
         this.dispose();
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, 
+            "Error while proceeding to payment: " + e.getMessage(),
+            "Error", JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void YearListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_YearListValueChanged

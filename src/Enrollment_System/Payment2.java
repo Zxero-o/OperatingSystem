@@ -8,9 +8,14 @@ package Enrollment_System;
  *
  * @author ivanc
  */
+
+import dao.Payment2DAO;
+import javax.swing.JOptionPane;
+
 public class Payment2 extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Payment2.class.getName());
+    private int enrollmentID;
 
     /**
      * Creates new form Payment2
@@ -114,6 +119,7 @@ public class Payment2 extends javax.swing.JFrame {
             }
         });
 
+        yr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         yr.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 yrActionPerformed(evt);
@@ -203,8 +209,24 @@ public class Payment2 extends javax.swing.JFrame {
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
-        new Payment2().setVisible(true);
-        this.dispose();
+        try {
+        String method = fn.getText();
+        double amountDue = Double.parseDouble(yr.getText());
+
+        // Assuming you passed enrollmentID from the Enroll.java screen:
+        int enrollmentID = this.enrollmentID;
+
+        dao.Payment2DAO.insertPayment(enrollmentID, amountDue, method);
+
+        JOptionPane.showMessageDialog(this, "Payment process initialized!");
+        this.dispose(); // Close payment window
+        new StudentDashboard(Login.username).setVisible(true); // Go to dashboard
+
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Please enter a valid amount.");
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    }
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void fnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fnActionPerformed
@@ -213,6 +235,7 @@ public class Payment2 extends javax.swing.JFrame {
 
     private void yrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yrActionPerformed
         // TODO add your handling code here:
+        yr.setText("12000.00");
     }//GEN-LAST:event_yrActionPerformed
 
     /**

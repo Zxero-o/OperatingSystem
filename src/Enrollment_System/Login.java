@@ -16,6 +16,7 @@ import java.sql.*;
 public class Login extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Login.class.getName());
+    public static String username;
 
     /**
      * Creates new form Login
@@ -53,22 +54,22 @@ public class Login extends javax.swing.JFrame {
             switch (role) {
                 case "Student" ->{
                         ResultSet rs = st.executeQuery(
-                                "SELECT * FROM student s JOIN user u ON s.User_ID = u.User_ID WHERE u.Username = '" + username + "'"
-                        );      if (rs.next()) {
+                                "SELECT * FROM student s JOIN user u ON s.User_ID = u.User_ID WHERE u.Username = '" + username + "'");      
+                        if (rs.next()) {
                             String email = rs.getString("Email");
                             String status = rs.getString("Status");
                             
                             if (email == null || email.isEmpty() || status.equalsIgnoreCase("Pending")) {
                                 new StudentLogin().setVisible(true);
                             } else {
-                                new StudentDashboard().setVisible(true);
+                                new StudentDashboard(username).setVisible(true);         
                             }
                         }                          
                 }
                 case "Instructor" ->{
                         ResultSet rs = st.executeQuery(
-                                "SELECT * FROM instructor i JOIN user u ON i.User_ID = u.User_ID WHERE u.Username = '" + username + "'"
-                        );      if (rs.next()) {
+                                "SELECT * FROM instructor i JOIN user u ON i.User_ID = u.User_ID WHERE u.Username = '" + username + "'");      
+                        if (rs.next()) {
                             String email = rs.getString("Email");
                             String dept = rs.getString("DeptName");
                             
@@ -303,6 +304,7 @@ public class Login extends javax.swing.JFrame {
         User user = LoginDAO.login(username, password);
 
         if (user != null) {
+            Login.username = username;
             openDashboard(user);
         } else {
             JOptionPane.showMessageDialog(this, "Invalid username or password!");
